@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ConfigResourceModule } from './config-resource/config-resource.module';
 
 @Module({
   /**
@@ -8,7 +9,7 @@ import { AppService } from './app.service';
    * The modules that we import like this will need to register their providers
    * as exports to access them in this module.
    */
-  imports: [],
+  imports: [ConfigResourceModule],
   /**
    * An array of controllers in this module. As a reminder, controllers expose
    * our application's external-facing API (via rest, graphql, or other means).
