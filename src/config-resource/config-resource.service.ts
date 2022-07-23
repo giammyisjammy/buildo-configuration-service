@@ -2,53 +2,43 @@ import { Injectable } from '@nestjs/common';
 import { CreateConfigResourceDto } from './dto/create-config-resource.dto';
 import { UpdateConfigResourceDto } from './dto/update-config-resource.dto';
 import { ConfigResource } from './entities/config-resource.entity';
+import { FakeRepository } from './fake-repository';
 
 @Injectable()
 export class ConfigResourceService {
-  /**
-   * In-memory db
-   */
-  private readonly configResources: ConfigResource[] = [
-    new ConfigResource('test 1', 'value for test 1'),
-    new ConfigResource('test 2', 'value for test 2'),
-    new ConfigResource('test 3', 'value for test 3'),
-  ];
+  constructor(
+    private readonly configResourceRepository: FakeRepository<ConfigResource>,
+  ) {}
 
-  create(createConfigResourceDto: CreateConfigResourceDto): void {
+  create(
+    createConfigResourceDto: CreateConfigResourceDto,
+  ): Promise<ConfigResource> {
     // const dto = createConfigResourceDto;
 
     // if (this.configResources.find((x) => x.id === dto.id)) {
     //   throw new Error(`Config with the id ${dto.id} already exists`);
     // }
 
-    this.configResources.push(
-      ConfigResource.deserialize(createConfigResourceDto),
-    );
+    const newResource = ConfigResource.deserialize(createConfigResourceDto);
+    return this.configResourceRepository.save(newResource);
   }
 
-  findAll(): ConfigResource[] {
-    return this.configResources;
+  findAll(): Promise<ConfigResource[]> {
+    return this.configResourceRepository.find();
   }
 
-  findOne(id: string): ConfigResource | null {
-    return this.configResources.find((x) => x.id === id);
+  findOne(id: string): Promise<ConfigResource | null> {
+    return this.configResourceRepository.findOneBy(id);
   }
 
-  update(id: string, updateConfigResourceDto: UpdateConfigResourceDto) {
-    const updateIndex = this.configResources.findIndex((x) => x.id === id);
-    if (updateIndex === -1) throw new Error('Could not update: id not found.');
-
-    const elementToUpdate = this.configResources[updateIndex];
-    this.configResources[updateIndex] = Object.assign(
-      elementToUpdate,
-      updateConfigResourceDto,
-    ) as ConfigResource; // TODO lookup new Object.assign type inference
+  async update(
+    id: string,
+    updateConfigResourceDto: UpdateConfigResourceDto,
+  ): Promise<void> {
+    await this.configResourceRepository.update(id, updateConfigResourceDto);
   }
 
-  remove(id: string) {
-    const removeIndex = this.configResources.findIndex((x) => x.id === id);
-    if (removeIndex === -1) throw new Error('Could not delete: id not found.');
-
-    this.configResources.splice(removeIndex, 1);
+  async remove(id: string): Promise<void> {
+    await this.configResourceRepository.delete(id);
   }
 }
