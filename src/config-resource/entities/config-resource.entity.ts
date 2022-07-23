@@ -16,14 +16,14 @@ export class ConfigResource implements IConfigResource {
 
   static deserialize(dto: CreateConfigResourceDto): IConfigResource {
     const model = new ConfigResource(dto.name, dto.value);
-    model.id = dto.id;
+    // model.id = dto.id;
 
     return model;
   }
 
   serialize(): CreateConfigResourceDto {
     return {
-      id: this.id,
+      // id: this.id,
       name: this.name,
       value: this.value,
     };
