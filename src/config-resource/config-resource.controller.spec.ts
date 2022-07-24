@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigResourceController } from './config-resource.controller';
 import { ConfigResourceService } from './config-resource.service';
-import { CreateConfigResourceDto } from './dto';
+import { CreateConfigResourceDto } from './dto/create-config-resource.dto';
 import { ConfigResource } from './entities/config-resource.entity';
 
 jest.mock('./config-resource.service');

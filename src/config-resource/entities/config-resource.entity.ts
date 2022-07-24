@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { CreateConfigResourceDto } from '@/config-resource/dto';
+import { CreateConfigResourceDto } from '@/config-resource/dto/create-config-resource.dto';
 
 export interface IConfigResource {
   id: string;
