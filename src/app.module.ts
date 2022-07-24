@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigResourceModule } from './config-resource/config-resource.module';
@@ -9,7 +10,20 @@ import { ConfigResourceModule } from './config-resource/config-resource.module';
    * The modules that we import like this will need to register their providers
    * as exports to access them in this module.
    */
-  imports: [ConfigResourceModule],
+  imports: [
+    TypeOrmModule.forRoot({
+      // TODO use .env variables
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'root',
+      database: 'test',
+      autoLoadEntities: true,
+      synchronize: process.env.NODE_ENV !== 'production', // shouldn't be used in production - otherwise you can lose production data.
+    }),
+    ConfigResourceModule,
+  ],
   /**
    * An array of controllers in this module. As a reminder, controllers expose
    * our application's external-facing API (via rest, graphql, or other means).

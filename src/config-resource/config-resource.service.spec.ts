@@ -1,11 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigResourceService } from './config-resource.service';
 import { ConfigResource } from './entities/config-resource.entity';
-
-type Repository<T> = {
-  findOneBy: (id: string) => Promise<T>;
-  delete: (id: string) => Promise<void>;
-};
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 const oneConfigResource = new ConfigResource('test 1', 'value for test 1');
 
@@ -23,23 +20,24 @@ describe('ConfigResourceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ConfigResourceService,
-        // {
-        //   // provide: getRepositoryToken(ConfigResource),
-        //   provide: ConfigResource,
-        //   useValue: {
-        //     find: jest.fn().mockResolvedValue(configResourceArray),
-        //     findOneBy: jest.fn().mockResolvedValue(oneConfigResource),
-        //     save: jest.fn().mockResolvedValue(oneConfigResource),
-        //     remove: jest.fn(),
-        //     delete: jest.fn(),
-        //   },
-        // },
+        {
+          provide: getRepositoryToken(ConfigResource),
+          useValue: {
+            find: jest.fn().mockResolvedValue(configResourceArray),
+            findOneBy: jest.fn().mockResolvedValue(oneConfigResource),
+            save: jest.fn().mockResolvedValue(oneConfigResource),
+            remove: jest.fn(),
+            delete: jest.fn(),
+          },
+        },
         ,
       ],
     }).compile();
 
     service = module.get<ConfigResourceService>(ConfigResourceService);
-    // repository = module.get<Repository<ConfigResource>>(getRepositoryToken(ConfigResource));
+    repository = module.get<Repository<ConfigResource>>(
+      getRepositoryToken(ConfigResource),
+    );
   });
 
   it('should be defined', () => {

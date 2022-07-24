@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateConfigResourceDto } from './dto';
+import { UpdateConfigResourceDto } from './dto/update-config-resource.dto';
 import { ConfigResource } from './entities/config-resource.entity';
 
 export const IN_MEMORY_DB: ConfigResource[] = [

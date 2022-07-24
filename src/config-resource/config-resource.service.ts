@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreateConfigResourceDto } from './dto/create-config-resource.dto';
 import { UpdateConfigResourceDto } from './dto/update-config-resource.dto';
 import { ConfigResource } from './entities/config-resource.entity';
-import { FakeRepository } from './fake-repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ConfigResourceService {
   constructor(
-    private readonly configResourceRepository: FakeRepository<ConfigResource>,
+    @InjectRepository(ConfigResource)
+    private readonly configResourceRepository: Repository<ConfigResource>,
   ) {}
 
   create(
@@ -28,7 +30,7 @@ export class ConfigResourceService {
   }
 
   findOne(id: string): Promise<ConfigResource | null> {
-    return this.configResourceRepository.findOneBy(id);
+    return this.configResourceRepository.findOneBy({ id: id });
   }
 
   async update(
