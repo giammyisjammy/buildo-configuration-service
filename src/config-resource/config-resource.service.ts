@@ -1,28 +1,25 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateConfigResourceDto } from './dto/create-config-resource.dto';
 import { UpdateConfigResourceDto } from './dto/update-config-resource.dto';
 import { ConfigResource } from './entities/config-resource.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 @Injectable()
-export class ConfigResourceService {
+export class ConfigResourcesService {
   constructor(
     @InjectRepository(ConfigResource)
     private readonly configResourceRepository: Repository<ConfigResource>,
   ) {}
 
-  create(
-    createConfigResourceDto: CreateConfigResourceDto,
-  ): Promise<ConfigResource> {
-    // const dto = createConfigResourceDto;
-
+  create(dto: CreateConfigResourceDto): Promise<ConfigResource> {
     // if (this.configResources.find((x) => x.id === dto.id)) {
     //   throw new Error(`Config with the id ${dto.id} already exists`);
     // }
 
-    const newResource = ConfigResource.deserialize(createConfigResourceDto);
-    return this.configResourceRepository.save(newResource);
+    const entity = new ConfigResource(dto.name, dto.value);
+
+    return this.configResourceRepository.save(entity);
   }
 
   findAll(): Promise<ConfigResource[]> {
@@ -33,11 +30,8 @@ export class ConfigResourceService {
     return this.configResourceRepository.findOneBy({ id: id });
   }
 
-  async update(
-    id: string,
-    updateConfigResourceDto: UpdateConfigResourceDto,
-  ): Promise<void> {
-    await this.configResourceRepository.update(id, updateConfigResourceDto);
+  async update(id: string, dto: UpdateConfigResourceDto): Promise<void> {
+    await this.configResourceRepository.update(id, dto);
   }
 
   async remove(id: string): Promise<void> {

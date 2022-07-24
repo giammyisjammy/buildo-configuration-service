@@ -1,21 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  NotFoundException,
   BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { ConfigResourceService } from './config-resource.service';
+import { ConfigResourcesService } from './config-resource.service';
 import { CreateConfigResourceDto } from './dto/create-config-resource.dto';
 import { UpdateConfigResourceDto } from './dto/update-config-resource.dto';
 
 @Controller('config')
 export class ConfigResourceController {
-  constructor(private readonly configResourceService: ConfigResourceService) {}
+  constructor(private readonly configResourceService: ConfigResourcesService) {}
 
   @Post()
   create(@Body() createConfigResourceDto: CreateConfigResourceDto) {

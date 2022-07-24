@@ -1,31 +1,19 @@
 import { v4 as uuid } from 'uuid';
-import { CreateConfigResourceDto } from '@/config-resource/dto/create-config-resource.dto';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-export interface IConfigResource {
-  id: string;
-  name: string;
-  value: string;
-
-  serialize(): CreateConfigResourceDto; // TODO is this really needed?
-}
-
-export class ConfigResource implements IConfigResource {
+@Entity()
+export class ConfigResource {
+  @PrimaryGeneratedColumn()
   id: string = uuid();
 
-  constructor(public name: string, public value: string) {}
+  @Column()
+  public name: string;
 
-  static deserialize(dto: CreateConfigResourceDto): IConfigResource {
-    const model = new ConfigResource(dto.name, dto.value);
-    // model.id = dto.id;
+  @Column()
+  public value: string;
 
-    return model;
-  }
-
-  serialize(): CreateConfigResourceDto {
-    return {
-      // id: this.id,
-      name: this.name,
-      value: this.value,
-    };
+  constructor(name: string, value: string) {
+    this.name = name;
+    this.value = value;
   }
 }

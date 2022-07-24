@@ -1,8 +1,8 @@
-import * as request from 'supertest';
-import { Test } from '@nestjs/testing';
 import { ConfigResourceModule } from '@/config-resource/config-resource.module';
-import { ConfigResourceService } from '@/config-resource/config-resource.service';
+import { ConfigResourcesService } from '@/config-resource/config-resource.service';
 import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import * as request from 'supertest';
 
 describe('ConfigResource', () => {
   let app: INestApplication;
@@ -18,7 +18,7 @@ describe('ConfigResource', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [ConfigResourceModule],
     })
-      .overrideProvider(ConfigResourceService)
+      .overrideProvider(ConfigResourcesService)
       .useValue(configResourceService)
       .compile();
 

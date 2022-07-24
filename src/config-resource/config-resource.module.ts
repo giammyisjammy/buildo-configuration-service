@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ConfigResourceService } from './config-resource.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigResourceController } from './config-resource.controller';
+import { ConfigResourcesService } from './config-resource.service';
+import { ConfigResource } from './entities/config-resource.entity';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([ConfigResource])],
   controllers: [ConfigResourceController],
-  providers: [ConfigResourceService],
+  providers: [ConfigResourcesService],
 })
 export class ConfigResourceModule {}

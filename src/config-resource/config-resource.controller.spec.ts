@@ -1,8 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigResourceController } from './config-resource.controller';
-import { ConfigResourceService } from './config-resource.service';
-import { CreateConfigResourceDto } from './dto/create-config-resource.dto';
+import { ConfigResourcesService } from './config-resource.service';
 import { ConfigResource } from './entities/config-resource.entity';
 
 jest.mock('./config-resource.service');
@@ -10,16 +9,16 @@ const dummyItem: ConfigResource = new ConfigResource('something', '42');
 
 describe('ConfigResourceController', () => {
   let controller: ConfigResourceController;
-  let service: ConfigResourceService;
+  let service: ConfigResourcesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ConfigResourceController],
-      providers: [ConfigResourceService],
+      providers: [ConfigResourcesService],
     }).compile();
 
     controller = module.get<ConfigResourceController>(ConfigResourceController);
-    service = module.get<ConfigResourceService>(ConfigResourceService);
+    service = module.get<ConfigResourcesService>(ConfigResourcesService);
   });
 
   it('should be defined', () => {
