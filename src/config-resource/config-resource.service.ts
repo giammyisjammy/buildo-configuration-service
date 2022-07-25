@@ -35,6 +35,9 @@ export class ConfigResourcesService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.configResourceRepository.delete(id);
+    const result = await this.configResourceRepository.delete(id);
+    if (result.affected === 0) {
+      throw new Error(`Config with the id ${id} not found`);
+    }
   }
 }

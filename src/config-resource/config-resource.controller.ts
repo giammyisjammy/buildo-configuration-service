@@ -28,8 +28,8 @@ export class ConfigResourceController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    const resource = this.configResourceService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const resource = await this.configResourceService.findOne(id);
     if (!resource) {
       throw new NotFoundException(`Resource with id ${id} not found`);
     }
@@ -59,12 +59,12 @@ export class ConfigResourceController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     try {
-      return this.configResourceService.remove(id);
+      return await this.configResourceService.remove(id);
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message.includes('id not found')) {
+        if (error.message.includes('not found')) {
           throw new NotFoundException(
             `Could not delete: resource with id ${id} not found`,
           );

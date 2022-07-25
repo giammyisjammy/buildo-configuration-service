@@ -34,12 +34,11 @@ describe('ConfigResourcesService', () => {
         {
           provide: getRepositoryToken(ConfigResource),
           useValue: {
+            save: jest.fn().mockResolvedValue(oneResource),
             find: jest.fn().mockResolvedValue(resourceArray),
             findOneBy: jest.fn().mockResolvedValue(oneResource),
-            save: jest.fn().mockResolvedValue(oneResource),
             update: jest.fn(),
-            remove: jest.fn(),
-            delete: jest.fn(),
+            delete: jest.fn().mockResolvedValue({ affected: 1 }),
           },
         },
       ],
