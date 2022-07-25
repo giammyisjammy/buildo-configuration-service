@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { AppController } from './app.controller';
@@ -12,16 +13,25 @@ import { ConfigResourceModule } from './config-resource/config-resource.module';
    * as exports to access them in this module.
    */
   imports: [
-    TypeOrmModule.forRoot({
-      // TODO use .env variables
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'test',
-      autoLoadEntities: true,
-      synchronize: process.env.NODE_ENV !== 'production', // otherwise you can lose production data.
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mysql',
+        host: 'localhost',
+        // host: configService.get<string>('HOST', 'localhost'),
+        port: 3306,
+        // port: +configService.get<number>('PORT', 3306),
+        username: 'root',
+        // username: configService.get<string>('USERNAME', 'root'),
+        password: 'root',
+        // password: configService.get<string>('PASSWORD', 'root'),
+        database: 'test',
+        // database: configService.get<string>('DATABASE', 'test'),
+        autoLoadEntities: true,
+        synchronize: process.env.NODE_ENV !== 'production', // otherwise you can lose production data.
+      }),
+      inject: [ConfigService],
     }),
     ConfigResourceModule,
   ],
@@ -44,5 +54,8 @@ import { ConfigResourceModule } from './config-resource/config-resource.module';
   // exports: [],
 })
 export class AppModule {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    private dataSource: DataSource,
+    private configService: ConfigService,
+  ) {}
 }
