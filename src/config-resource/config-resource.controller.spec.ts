@@ -5,7 +5,11 @@ import { ConfigResourcesService } from './config-resource.service';
 import { ConfigResource } from './entities/config-resource.entity';
 
 jest.mock('./config-resource.service');
-const dummyItem: ConfigResource = new ConfigResource('something', '42');
+const oneResource = {
+  id: '1',
+  name: 'name #1',
+  value: 'value #1',
+};
 
 describe('ConfigResourceController', () => {
   let controller: ConfigResourceController;
@@ -35,7 +39,7 @@ describe('ConfigResourceController', () => {
 
   describe('findAll', () => {
     it('should return an array of ConfigResource', async () => {
-      const result: ConfigResource[] = [dummyItem];
+      const result = [oneResource];
       jest.spyOn(service, 'findAll').mockImplementation(async () => result);
 
       expect(await controller.findAll()).toBe(result);
@@ -44,25 +48,23 @@ describe('ConfigResourceController', () => {
 
   describe('findOne', () => {
     it('should return a ConfigResource when resource is present', async () => {
-      const result: ConfigResource = dummyItem;
+      const result: ConfigResource = oneResource;
       jest.spyOn(service, 'findOne').mockImplementation(async () => result);
 
       expect(await controller.findOne(result.id)).toBe(result);
     });
 
     it('should throw when resource is not present', async () => {
-      const result: ConfigResource = dummyItem;
-      jest.spyOn(service, 'findOne').mockImplementation(() => null);
+      const result: ConfigResource = oneResource;
+      jest.spyOn(service, 'findOne').mockResolvedValue(null);
 
-      expect(() => {
-        controller.findOne(result.id);
-      }).toThrow(NotFoundException);
+      expect(controller.findOne(result.id)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('update', () => {
     it('should call the service', async () => {
-      controller.update(dummyItem.id, {
+      controller.update(oneResource.id, {
         value: 'new value',
       });
 
@@ -70,33 +72,33 @@ describe('ConfigResourceController', () => {
     });
 
     it('should throw if service fails', async () => {
-      jest.spyOn(service, 'update').mockImplementation(() => {
-        throw new Error('id not found');
-      });
+      jest
+        .spyOn(service, 'update')
+        .mockRejectedValue(new Error('id not found'));
 
-      expect(() => {
-        controller.update(dummyItem.id, {
+      expect(
+        controller.update(oneResource.id, {
           value: 'new value',
-        });
-      }).toThrow(NotFoundException);
+        }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('remove', () => {
     it('should call the service', async () => {
-      controller.remove(dummyItem.id);
+      controller.remove(oneResource.id);
 
       expect(service.remove).toHaveBeenCalled();
     });
 
     it('should throw if service fails', async () => {
-      jest.spyOn(service, 'remove').mockImplementation(() => {
-        throw new Error('id not found');
-      });
+      jest
+        .spyOn(service, 'remove')
+        .mockRejectedValue(new Error('id not found'));
 
-      expect(() => {
-        controller.remove(dummyItem.id);
-      }).toThrow(NotFoundException);
+      expect(controller.remove(oneResource.id)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

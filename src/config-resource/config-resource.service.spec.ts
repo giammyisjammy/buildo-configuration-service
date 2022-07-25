@@ -37,7 +37,7 @@ describe('ConfigResourcesService', () => {
             save: jest.fn().mockResolvedValue(oneResource),
             find: jest.fn().mockResolvedValue(resourceArray),
             findOneBy: jest.fn().mockResolvedValue(oneResource),
-            update: jest.fn(),
+            update: jest.fn().mockResolvedValue({ affected: 1 }),
             delete: jest.fn().mockResolvedValue({ affected: 1 }),
           },
         },
@@ -89,8 +89,9 @@ describe('ConfigResourcesService', () => {
   describe('update', () => {
     it('should call update with the passed value', async () => {
       const updateSpy = jest.spyOn(repository, 'update');
-      await service.update('2', oneResource);
+      const retVal = await service.update('2', oneResource);
       expect(updateSpy).toBeCalledWith('2', oneResource);
+      expect(retVal).toBeUndefined();
     });
   });
 
