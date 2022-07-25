@@ -93,6 +93,14 @@ describe('ConfigResourcesService', () => {
       expect(updateSpy).toBeCalledWith('2', oneResource);
       expect(retVal).toBeUndefined();
     });
+
+    it('should fail when resource is not present', async () => {
+      jest
+        .spyOn(repository, 'update')
+        .mockResolvedValue({ raw: [], generatedMaps: [], affected: 0 });
+
+      expect(service.update('2', oneResource)).rejects.toThrow();
+    });
   });
 
   describe('remove()', () => {
@@ -101,6 +109,14 @@ describe('ConfigResourcesService', () => {
       const retVal = await service.remove('2');
       expect(removeSpy).toBeCalledWith('2');
       expect(retVal).toBeUndefined();
+    });
+
+    it('should fail when resource is not present', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockResolvedValue({ raw: [], affected: 0 });
+
+      expect(service.remove('2')).rejects.toThrow();
     });
   });
 });
