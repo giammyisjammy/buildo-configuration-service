@@ -38,9 +38,12 @@ Make sure you have [set up a local installation of MySQL](https://dev.mysql.com/
   ```
 
 - in project directory, install dependencies:
+
   ```bash
   $ npm install
   ```
+
+- in project directory, create your `.env` and `.env.test` files like the one in `.env.example`
 
 ## Running the app
 
