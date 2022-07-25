@@ -1,67 +1,110 @@
-import { ConfigResourceModule } from '@/config-resource/config-resource.module';
-import { ConfigResourcesService } from '@/config-resource/config-resource.service';
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
+import { ConfigResourceModule } from '../src/config-resource/config-resource.module';
+import { CreateConfigResourceDto } from '../src/config-resource/dto/create-config-resource.dto';
 
-describe('ConfigResource', () => {
+describe('Resources - /config (e2e)', () => {
   let app: INestApplication;
-  const configResourceService = {
-    create: () => {},
-    findAll: () => ['test'],
-    findOne: () => 'test',
-    update: () => {},
-    remove: () => {},
-  };
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [ConfigResourceModule],
-    })
-      .overrideProvider(ConfigResourcesService)
-      .useValue(configResourceService)
-      .compile();
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        TypeOrmModule.forRootAsync({
+          imports: [ConfigModule],
+          useFactory: (configService: ConfigService) => ({
+            // TODO use environment variables
+            host: 'localhost',
+            port: 3306,
+            username: 'root',
+            password: 'root',
+            database: 'test',
 
-    app = moduleRef.createNestApplication();
+            // FIXME this is not working
+            // host: configService.get<string>('HOST', 'localhost'),
+            // port: +configService.get<number>('PORT', 3306),
+            // username: configService.get<string>('USERNAME', 'root'),
+            // password: configService.get<string>('PASSWORD', 'root'),
+            // database: configService.get<string>('DATABASE', 'test'),
+
+            type: 'mysql',
+            autoLoadEntities: true,
+            synchronize: process.env.NODE_ENV !== 'production', // otherwise you can lose production data.
+          }),
+          inject: [ConfigService],
+        }),
+        ConfigResourceModule,
+      ],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
     await app.init();
   });
 
-  describe('config', () => {
-    it(`/POST create`, () => {
-      return request(app.getHttpServer())
-        .post('/config')
-        .send({ name: 'something', value: '42' })
-        .expect(200)
-        .expect({
-          data: configResourceService.create(),
-        });
-    });
-    it(`/POST create`, () => {
-      return request(app.getHttpServer())
-        .post('/config')
-        .send({ name: 'value missing' })
-        .expect(400);
-    });
-    it(`/GET findAll`, () => {
-      return request(app.getHttpServer()).get('/config').expect(200).expect({
-        data: configResourceService.findAll(),
+  it('Create [POST /config]', () => {
+    const resource = {
+      name: 'Name #1',
+      value: 'Value #1',
+    };
+
+    return request(app.getHttpServer())
+      .post('/config')
+      .send(resource as CreateConfigResourceDto)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toEqual(
+          expect.objectContaining({
+            name: expect.stringContaining(resource.name),
+            value: expect.stringContaining(resource.value),
+          }),
+        );
       });
-    });
-    it(`/GET findOne`, () => {
-      return request(app.getHttpServer()).get('/config/1').expect(200).expect({
-        data: configResourceService.findOne(),
+  });
+
+  it('Get all resources [GET /config]', () => {
+    return request(app.getHttpServer())
+      .get('/config')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeDefined();
       });
-    });
-    it(`/PATCH update`, () => {
-      return request(app.getHttpServer()).get('/config/1').expect(200).expect({
-        data: configResourceService.update(),
+  });
+
+  it('Get one resource [GET /config/:id]', async () => {
+    const resource = {
+      name: 'Name #2',
+      value: 'Value #2',
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/config')
+      .send(resource as CreateConfigResourceDto);
+
+    const id = response.body.id;
+
+    await request(app.getHttpServer())
+      .get(`/config/${id}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeDefined();
       });
-    });
-    it(`/DELETE remove`, () => {
-      return request(app.getHttpServer()).get('/config/1').expect(200).expect({
-        data: configResourceService.remove(),
-      });
-    });
+  });
+
+  it('Delete one resource [DELETE /config/:id]', async () => {
+    const resource = {
+      name: 'Name #2',
+      value: 'Value #2',
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/config')
+      .send(resource as CreateConfigResourceDto);
+
+    const id = response.body.id;
+
+    await request(app.getHttpServer()).delete(`/config/${id}`).expect(200);
   });
 
   afterAll(async () => {

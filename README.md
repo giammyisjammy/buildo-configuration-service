@@ -33,7 +33,8 @@ Make sure you have [set up a local installation of MySQL](https://dev.mysql.com/
 - in MySQL Workbench, create the database:
 
   ```SQL
-  CREATE DATABASE test;
+  CREATE DATABASE dev; -- for development
+  CREATE DATABASE test; -- for e2e
   ```
 
 - in project directory, install dependencies:

@@ -17,17 +17,21 @@ import { ConfigResourceModule } from './config-resource/config-resource.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
+        // TODO use environment variables
         host: 'localhost',
-        // host: configService.get<string>('HOST', 'localhost'),
         port: 3306,
-        // port: +configService.get<number>('PORT', 3306),
         username: 'root',
-        // username: configService.get<string>('USERNAME', 'root'),
         password: 'root',
+        database: 'dev',
+
+        // FIXME this is not working
+        // host: configService.get<string>('HOST', 'localhost'),
+        // port: +configService.get<number>('PORT', 3306),
+        // username: configService.get<string>('USERNAME', 'root'),
         // password: configService.get<string>('PASSWORD', 'root'),
-        database: 'test',
-        // database: configService.get<string>('DATABASE', 'test'),
+        // database: configService.get<string>('DATABASE', 'dev'),
+
+        type: 'mysql',
         autoLoadEntities: true,
         synchronize: process.env.NODE_ENV !== 'production', // otherwise you can lose production data.
       }),
