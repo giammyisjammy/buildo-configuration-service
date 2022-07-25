@@ -24,13 +24,22 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Configuration service built using [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
 
-```bash
-$ npm install
-```
+Make sure you have [set up a local installation of MySQL](https://dev.mysql.com/doc/mysql-getting-started/en/). Then do the following:
+
+- in MySQL Workbench, create the database:
+
+  ```SQL
+  CREATE DATABASE test;
+  ```
+
+- in project directory, install dependencies:
+  ```bash
+  $ npm install
+  ```
 
 ## Running the app
 
@@ -64,9 +73,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Author - [Gianmarco Bado](https://github.com/giammyisjammy)
 
 ## License
 
