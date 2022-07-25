@@ -31,7 +31,10 @@ export class ConfigResourcesService {
   }
 
   async update(id: string, dto: UpdateConfigResourceDto): Promise<void> {
-    await this.configResourceRepository.update(id, dto);
+    const result = await this.configResourceRepository.update(id, dto);
+    if (result.affected === 0) {
+      throw new Error(`Config with the id ${id} not found`);
+    }
   }
 
   async remove(id: string): Promise<void> {

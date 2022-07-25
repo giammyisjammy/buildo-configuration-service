@@ -37,15 +37,18 @@ export class ConfigResourceController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateConfigResourceDto: UpdateConfigResourceDto,
   ) {
     try {
-      return this.configResourceService.update(id, updateConfigResourceDto);
+      return await this.configResourceService.update(
+        id,
+        updateConfigResourceDto,
+      );
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message.includes('id not found')) {
+        if (error.message.includes('not found')) {
           throw new NotFoundException(
             `Could not update: resource with id ${id} not found`,
           );
